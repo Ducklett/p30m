@@ -2,7 +2,7 @@
 #define TEST_ENTRYPOINT testSub
 #endif
 
-#include "./070621 test.h"
+#include "./test.h"
 
 int sub(int a, int b)
 {

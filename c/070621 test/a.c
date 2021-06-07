@@ -2,7 +2,7 @@
 #define TEST_ENTRYPOINT testAdd
 #endif
 
-#include "./070621 test.h"
+#include "./test.h"
 
 int add(int a, int b)
 {
