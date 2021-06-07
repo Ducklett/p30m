@@ -2,12 +2,12 @@
 #define TEST_ENTRYPOINT testSuite
 #endif
 
-#include "./test.h"
 #include "./a.c"
 #include "./b.c"
+#include "./test.h"
 
 void testSuite()
 {
-    testAdd();
-    testSub();
+	testAdd();
+	testSub();
 }
