@@ -1,0 +1,154 @@
+<!--
+A third masonry attempt
+This one has centering and switching between horizontal and vertical layouts
+
+I also created an ad-hoc jquery-esque dom manipulation framework
+because the native API is painful to work with
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masonry</title>
+</head>
+
+<body>
+    <my-masonry>
+        <div style="--height: 130px" class="block">1</div>
+        <div style="--height: 300px" class="block">2</div>
+        <div style="--height: 200px" class="block">3</div>
+        <div style="--height: 130px" class="block">4</div>
+        <div style="--height: 100px" class="block">5</div>
+        <div style="--height: 240px" class="block">6</div>
+        <div style="--height: 110px" class="block">7</div>
+        <div style="--height: 100px" class="block">8</div>
+        <div style="--height: 250px" class="block">9</div>
+        <div style="--height: 100px" class="block">10</div>
+        <div style="--height: 90px" class="block">11</div>
+        <div style="--height: 200px" class="block">12</div>
+        <div style="--height: 310px" class="block">13</div>
+        <div style="--height: 100px" class="block">14</div>
+        <div style="--height: 230px" class="block">15</div>
+        <div style="--height: 100px" class="block">16</div>
+        <div style="--height: 80px" class="block">17</div>
+        <div style="--height: 230px" class="block">18</div>
+        <div style="--height: 100px" class="block">19</div>
+        <div style="--height: 120px" class="block">20</div>
+    </my-masonry>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .block {
+            height: var(--height);
+            width: 100px;
+            background-color: coral;
+            border-radius: 4px;
+            margin: 4px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-size: 2em;
+            text-align: center;
+            color: white;
+            line-height: 100px;
+            font-weight: bold;
+        }
+
+        my-masonry {
+            width: 100%;
+            justify-content: center;
+            --direction: column;
+        }
+
+        /* horizontal masonry */
+        /*         
+        .block {
+            width: var(--height);
+            height: 100px;
+        }
+        
+        my-masonry {
+            width: 100%;
+            align-items: center;
+            --direction: row;
+        } */
+
+    </style>
+    <script>
+        HTMLElement.prototype.$class = function (name) {
+            this.classList.add(name);
+            return this
+        }
+        HTMLElement.prototype.$text = function (text) {
+            this.textContent = text;
+            return this
+        }
+        HTMLElement.prototype.$name = function (name) {
+            this.name = name;
+            return this
+        }
+        HTMLElement.prototype.$slot = function (slot) {
+            this.slot = slot;
+            return this
+        }
+        HTMLElement.prototype.$child = function (child) {
+            this.appendChild(child);
+            return this
+        }
+
+        const $ = name => document.createElement(name)
+        class Masonry extends HTMLElement {
+            constructor() {
+                super()
+
+                const shadow = this.attachShadow({
+                    mode: 'open'
+                })
+
+                const rowCount = 4
+                const rows = new Array(rowCount).fill(null).map((_, i) => {
+                    const slot = $('slot').$name(`row-${i}`)
+                    const row = $('div').$class('masonry-row').$child(slot)
+                    shadow.appendChild(row)
+                    return slot
+                })
+
+                const rowHeights = new Array(rowCount).fill(null).map(() => 0)
+                const minRowHeight = () => rowHeights.reduce((min, cur, i) => rowHeights[i] < rowHeights[min] ? i : min, 0)
+
+                for (let c of this.children) {
+                    const minRowI = minRowHeight()
+                    c.slot = rows[minRowI].name
+                    rowHeights[minRowI] += c.clientHeight
+                }
+
+                let direction = getComputedStyle(this).getPropertyValue('--direction') || 'column'
+                direction = direction.trim()
+
+                if (direction != 'row' && direction != 'column') {
+                    console.log('valid options for direction are row and column, got ' + direction)
+                    direction = 'column';
+                }
+                let crossDirection = direction == 'column' ? 'row' : 'column'
+
+                const style = $('style').$text(`
+					:host {
+						display:flex;
+						flex-direction:${crossDirection};
+					}
+					.masonry-row {
+						display:flex;
+						flex-direction:${direction};
+					}	
+				`)
+                shadow.appendChild(style)
+            }
+        }
+        customElements.define('my-masonry', Masonry)
+    </script>
+</body>
+
+</html>
