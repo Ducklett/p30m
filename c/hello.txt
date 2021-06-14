@@ -1,0 +1,2 @@
+Text file to test baking
+See bake.c
