@@ -4,107 +4,92 @@ some overtime to get anything presentable rendering at all
 -->
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Masonry</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <my-masonry>
-        <div style="--block-height: 100px" class="masonry-block"></div>
-        <div style="--block-height: 200px" class="masonry-block"></div>
-        <div style="--block-height: 230px" class="masonry-block"></div>
-        <div style="--block-height: 210px" class="masonry-block"></div>
-        <div style="--block-height: 140px" class="masonry-block"></div>
-        <div style="--block-height: 200px" class="masonry-block"></div>
-        <div style="--block-height: 300px" class="masonry-block"></div>
-        <div style="--block-height: 100px" class="masonry-block"></div>
-        <div style="--block-height: 200px" class="masonry-block"></div>
-        <div style="--block-height: 300px" class="masonry-block"></div>
-        <div style="--block-height: 400px" class="masonry-block"></div>
-        <div style="--block-height: 100px" class="masonry-block"></div>
-        <div style="--block-height: 80px" class="masonry-block"></div>
-        <div style="--block-height: 100px" class="masonry-block"></div>
-        <div style="--block-height: 200px" class="masonry-block"></div>
-        <div style="--block-height: 200px" class="masonry-block"></div>
-        <div style="--block-height: 200px" class="masonry-block"></div>
-        <div style="--block-height: 200px" class="masonry-block"></div>
-        <div style="--block-height: 200px" class="masonry-block"></div>
-        <div style="--block-height: 200px" class="masonry-block"></div>
+      <div style="--block-height: 100px" class="masonry-block"></div>
+      <div style="--block-height: 200px" class="masonry-block"></div>
+      <div style="--block-height: 230px" class="masonry-block"></div>
+      <div style="--block-height: 210px" class="masonry-block"></div>
+      <div style="--block-height: 140px" class="masonry-block"></div>
+      <div style="--block-height: 200px" class="masonry-block"></div>
+      <div style="--block-height: 300px" class="masonry-block"></div>
+      <div style="--block-height: 100px" class="masonry-block"></div>
+      <div style="--block-height: 200px" class="masonry-block"></div>
+      <div style="--block-height: 300px" class="masonry-block"></div>
+      <div style="--block-height: 400px" class="masonry-block"></div>
+      <div style="--block-height: 100px" class="masonry-block"></div>
+      <div style="--block-height: 80px" class="masonry-block"></div>
+      <div style="--block-height: 100px" class="masonry-block"></div>
+      <div style="--block-height: 200px" class="masonry-block"></div>
+      <div style="--block-height: 200px" class="masonry-block"></div>
+      <div style="--block-height: 200px" class="masonry-block"></div>
+      <div style="--block-height: 200px" class="masonry-block"></div>
+      <div style="--block-height: 200px" class="masonry-block"></div>
+      <div style="--block-height: 200px" class="masonry-block"></div>
     </my-masonry>
     <style>
-        .masonry-block {
-            height: var(--block-height);
-            width: 100px;
-            background-color: coral;
-            margin: 4px;
-            box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.45);
-        }
+      .masonry-block {
+        height: var(--block-height);
+        width: 100px;
+        background-color: coral;
+        margin: 4px;
+        box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.45);
+      }
 
-        body {
-            background-color: magenta;
-        }
+      body {
+        background-color: magenta;
+      }
 
-        * {
-            background-color: green;
-        }
-
+      * {
+        background-color: green;
+      }
     </style>
     <script>
-        class Masonry extends HTMLElement {
-            constructor() {
-                super()
+      class Masonry extends HTMLElement {
+        constructor () {
+          super()
 
-                // var parent = this.parentNode
-                console.log(this)
+          var shadow = this.attachShadow({ mode: 'open' })
 
-                var shadow = this.attachShadow({ mode: 'open' })
+          const rowCount = 4
+          const rows = new Array(rowCount).fill(null).map((_, i) => {
+            const row = document.createElement('div')
+            row.classList.add('masonry-row')
+            shadow.appendChild(row)
+            const slot = document.createElement('slot')
+            slot.name = `row-${i}`
+            slot.innerText = 'An empty slot :D'
+            row.appendChild(slot)
+            return slot
+          })
 
-                const rowCount = 4
-                const rows = new Array(rowCount).fill(null).map((_, i) => {
-                    const row = document.createElement('div')
-                    row.classList.add('masonry-row')
-                    shadow.appendChild(row)
-                    const slot = document.createElement('slot')
-                    slot.name = `row-${i}`
-                    slot.innerText = "An empty slot :D"
-                    row.appendChild(slot)
-                    return slot
-                })
-                console.log(rows)
+          let rowIndex = 0
+          for (let child of this.children) {
+            var slot = rows[rowIndex]
+            child.slot = slot.name
+            // slot.appendChild(child)
+            rowIndex = (rowIndex + 1) % rowCount
+          }
 
-                // var t = document.createElement('div')
-                // t.innerText = "foobar"
-                // shadow.appendChild(t)
-
-                let rowIndex = 0
-                for (let child of this.children) {
-                    var slot = rows[rowIndex]
-                    child.slot = slot.name
-                    // slot.appendChild(child)
-                    rowIndex = (rowIndex + 1) % rowCount
-                }
-
-                const style = document.createElement('style')
-                style.innerText = `
+          const style = document.createElement('style')
+          style.innerText = `
                     .masonry-row {
                         display: inline-flex;
                         flex-direction: column;
                     }
                 `
 
-                shadow.appendChild(style)
-
-                console.log(shadow)
-
-            }
+          shadow.appendChild(style)
         }
-        customElements.define('my-masonry', Masonry)
+      }
+      customElements.define('my-masonry', Masonry)
     </script>
-
-</body>
-
+  </body>
 </html>

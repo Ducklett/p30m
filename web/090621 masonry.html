@@ -1,93 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<!--
+  <!--
 Second masonry attempt.
 Width somewhat presentable results this time!
 Webcompanents are bizarre and really need
 some kind of wrapper library to make writing them a fun process
 -->
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Masonry</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <my-masonry>
-        <div style="--height:130px" class="block">1</div>
-        <div style="--height:200px" class="block">2</div>
-        <div style="--height:100px" class="block">3</div>
-        <div style="--height:40px" class="block">4</div>
-        <div style="--height:200px" class="block">5</div>
-        <div style="--height:150px" class="block">6</div>
-        <div style="--height:200px" class="block">7</div>
-        <div style="--height:120px" class="block">8</div>
-        <div style="--height:90px" class="block">9</div>
-        <div style="--height:210px" class="block">10</div>
-        <div style="--height:110px" class="block">11</div>
-        <div style="--height:200px" class="block">12</div>
-        <div style="--height:80px" class="block">13</div>
-        <div style="--height:200px" class="block">14</div>
-        <div style="--height:110px" class="block">15</div>
-        <div style="--height:120px" class="block">16</div>
-        <div style="--height:230px" class="block">17</div>
-        <div style="--height:90px" class="block">18</div>
-        <div style="--height:250px" class="block">19</div>
-        <div style="--height:100px" class="block">20</div>
+      <div style="--height:130px" class="block">1</div>
+      <div style="--height:200px" class="block">2</div>
+      <div style="--height:100px" class="block">3</div>
+      <div style="--height:40px" class="block">4</div>
+      <div style="--height:200px" class="block">5</div>
+      <div style="--height:150px" class="block">6</div>
+      <div style="--height:200px" class="block">7</div>
+      <div style="--height:120px" class="block">8</div>
+      <div style="--height:90px" class="block">9</div>
+      <div style="--height:210px" class="block">10</div>
+      <div style="--height:110px" class="block">11</div>
+      <div style="--height:200px" class="block">12</div>
+      <div style="--height:80px" class="block">13</div>
+      <div style="--height:200px" class="block">14</div>
+      <div style="--height:110px" class="block">15</div>
+      <div style="--height:120px" class="block">16</div>
+      <div style="--height:230px" class="block">17</div>
+      <div style="--height:90px" class="block">18</div>
+      <div style="--height:250px" class="block">19</div>
+      <div style="--height:100px" class="block">20</div>
     </my-masonry>
 
     <style>
-        .block {
-            margin: 4px;
-            background-color: coral;
-            border-radius: 4px;
-            height: var(--height);
-            width: 100px;
-            color: white;
-            text-align: center;
-            font-size: 2em;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        }
-
+      .block {
+        margin: 4px;
+        background-color: coral;
+        border-radius: 4px;
+        height: var(--height);
+        width: 100px;
+        color: white;
+        text-align: center;
+        font-size: 2em;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      }
     </style>
 
     <script>
-        class Masonry extends HTMLElement {
-            constructor() {
-                super()
+      class Masonry extends HTMLElement {
+        constructor () {
+          super()
 
-                const shadow = this.attachShadow({ mode: 'closed' })
+          const shadow = this.attachShadow({ mode: 'closed' })
 
-                const container = document.createElement('div')
-                container.classList.add('masonry-container')
-                shadow.appendChild(container)
+          const container = document.createElement('div')
+          container.classList.add('masonry-container')
+          shadow.appendChild(container)
 
-                const rowcount = 4
-                const rows = new Array(rowcount).fill(null).map((_, i) => {
-                    const row = document.createElement('div')
-                    row.classList.add('masonry-row')
-                    const slot = document.createElement('slot')
-                    slot.name = `row-${i}`
-                    row.appendChild(slot)
-                    container.appendChild(row)
-                    return slot
-                })
+          const rowcount = 4
+          const rows = new Array(rowcount).fill(null).map((_, i) => {
+            const row = document.createElement('div')
+            row.classList.add('masonry-row')
+            const slot = document.createElement('slot')
+            slot.name = `row-${i}`
+            row.appendChild(slot)
+            container.appendChild(row)
+            return slot
+          })
 
-                const rowHeights = new Array(rowcount).fill(null).map(() => 0)
-                const smallestRow = () => rowHeights.reduce((min, cur, i) => rowHeights[i] < rowHeights[min] ? i : min, 0)
+          const rowHeights = new Array(rowcount).fill(null).map(() => 0)
+          const smallestRow = () =>
+            rowHeights.reduce(
+              (min, cur, i) => (rowHeights[i] < rowHeights[min] ? i : min),
+              0
+            )
 
-                for (let n of this.children) {
-                    const i = smallestRow()
-                    const row = rows[i]
-                    n.slot = row.name
-                    rowHeights[i] += n.clientHeight
-                }
+          for (let n of this.children) {
+            const i = smallestRow()
+            const row = rows[i]
+            n.slot = row.name
+            rowHeights[i] += n.clientHeight
+          }
 
-                const style = document.createElement('style')
-                style.textContent = `
+          const style = document.createElement('style')
+          style.textContent = `
 .masonry-container {
     display:flex;
     flex-direction:row;
@@ -99,12 +102,10 @@ some kind of wrapper library to make writing them a fun process
 }                
                 `
 
-                shadow.appendChild(style)
-            }
+          shadow.appendChild(style)
         }
-        customElements.define('my-masonry', Masonry)
+      }
+      customElements.define('my-masonry', Masonry)
     </script>
-
-</body>
-
+  </body>
 </html>
